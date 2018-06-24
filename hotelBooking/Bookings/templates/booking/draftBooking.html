@@ -1,0 +1,23 @@
+<html>
+	<head>
+		<title>Draft Bookings</title>
+	</head>
+	<body>
+    <p><b>Welcome To Your Draft Bookings</b></p>
+        <table border = "1">
+            <tr><th>Hotel Name</th>
+                <th>Customer Name</th>
+                <th>Booking Status</th>
+                <th>Amount Per Day</th>
+                <th>Check In Date</th>
+                <th>Check Out Date</th>
+            </tr>
+            {% for booking in bookingListObj%}
+            <tr><td>{{booking.h_id.name}}</td><td>{{booking.c_id.name}}</td><td>{{booking.status}}</td><td>{{booking.amount}}</td>
+            <td>{{booking.checkInDate}}</td><td>{{booking.checkOutDate}}</td></tr>
+            {% endfor %}
+        </table>
+    <p><a href="/booking">Back</a></p>
+    <p><a href="/booking/login">Click to login</a></p>
+	</body>
+</html>

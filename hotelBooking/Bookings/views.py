@@ -46,7 +46,7 @@ def dashboard(request):
         customerObj = Customer.objects.get(contact=contact)
         request.session['customerPk']=customerObj.pk
         print(request.session)
-        return render(request , 'booking/dashboard.html')
+        return render(request , 'booking/dashboard.html',{'CustName': customerObj.name})
 
 
 def bookHotel(request):
@@ -67,26 +67,44 @@ def bookingResult(request):
         if request.POST['checkOutDate']:
             request.session['checkOutDate'] = request.POST['checkOutDate']
 
-        print(request.POST['location'])
+        #print(request.POST['location'])
         return render(request, 'booking/hotelList.html', {'hotelList': hotelList})
 
 @transaction.atomic
 def bookingConfirmation(request):
     request.session['hotelName']=request.POST['hotelName']
     hotelObj = Hotel.objects.get(name=request.session['hotelName'])
-
     customerObj = Customer.objects.get(pk=request.session['customerPk'])
-    bookingObj = Booking(h_id=hotelObj,c_id=customerObj,amount=request.session['amount'],
-                         status=Status.objects.get(status="COMPLETED"),checkInDate=request.session['checkInDate'],
-                         checkOutDate=request.session['checkOutDate'])
-    bookingObj.save()
-    totalCount = hotelObj.visitorCount +1
-    hotelObj.visitorCount=totalCount
+    totalCount = hotelObj.visitorCount + 1
+    hotelObj.visitorCount = totalCount
     hotelObj.save()
-    return HttpResponse('Your Booking has been Successfully Done')
+    print(request.POST)
+    try:
+        if request.POST['Book']:
+            bookingObj = Booking(h_id=hotelObj,c_id=customerObj,amount=request.session['amount'],
+                                 status=Status.objects.get(status="COMPLETED"),checkInDate=request.session['checkInDate'],
+                                 checkOutDate=request.session['checkOutDate'])
+            bookingObj.save()
+            return HttpResponse('Your Booking has been Successfully Done')
+    except :
+        bookingObj = Booking(h_id=hotelObj, c_id=customerObj, amount=request.session['amount'],
+                             status=Status.objects.get(status="DROPPED"), checkInDate=request.session['checkInDate'],
+                             checkOutDate=request.session['checkOutDate'])
+        bookingObj.save()
+        return HttpResponse('Your Booking has been Successfully Saved In the Drafts')
 
+
+
+#to check the number of visits to a particular hotel
 def viewVisits(request):
-    # hotelList=Hotel.objects.all().values_list('name',flat=True)
     hotelList = Hotel.objects.all()
-    visitorCount=Hotel.objects.all().values_list('visitorCount',flat=True)
-    return render(request,'booking/viewVisit.html',{'hotelList': hotelList,'visitorCount' : visitorCount})
+    return render(request,'booking/viewVisit.html',{'hotelList': hotelList})
+
+def draftBooking(request):
+    print(request.session['customerPk'])
+    bookingListObj = list(Booking.objects.filter(status=Status.objects.get(status="DROPPED"))
+                          .filter(c_id=request.session['customerPk']))
+    print(bookingListObj)
+    if len(bookingListObj) == 0:
+        return HttpResponse("No Draft Bookings To Display")
+    return render(request, 'booking/draftBooking.html',{'bookingListObj':bookingListObj})

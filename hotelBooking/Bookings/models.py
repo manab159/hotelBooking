@@ -23,10 +23,10 @@ class Feature(models.Model):
         ('BAR' , "BAR"),
 
     )
-    status = models.CharField(max_length=10, choices=FEATURE, unique=True)
+    feature = models.CharField(max_length=10, choices=FEATURE, unique=True)
 
     def __str__(self):
-        return self.status
+        return self.feature
 
 class Hotel(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -78,7 +78,7 @@ class HotelFeature(models.Model):
     f_id = models.ForeignKey("Feature", on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.f_id
+        return str(self.f_id)
 
     class Meta:
         verbose_name = "HotelFeature"
