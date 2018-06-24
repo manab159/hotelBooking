@@ -1,0 +1,12 @@
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<form action="{% url 'Bookings:registration' %}" method="post">
+    {% csrf_token %}
+    <p>{{ form.name.label }} {{ form.name }} </p>
+    <p>{{ form.contact.label }} {{ form.contact }}</p>
+    <p>{{ form.email.label }} {{ form.email }}</p>
+    <p>{{ form.address.label }} {{ form.address }}</p>
+    <p>{{ form.password.label }} {{ form.password }}</p>
+    <p>{{ form.cpassword.label }} {{ form.cpassword }} {{ form.cpassword.errors }}</p>
+    <input type="submit" value="Submit" />
+    <p><a href="/booking">Back</a></p>
+</form>

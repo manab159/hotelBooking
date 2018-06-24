@@ -1,0 +1,14 @@
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<b>BOOK A HOTEL</b>
+<form action="{% url 'Bookings:bookingResult' %}" method="post">
+    {% csrf_token %}
+
+    <p>{{ form.location.label }} {{ form.location }} </p>
+    <!--<p>{{ form.checkInDate.label }} {{ form.checkInDate }}</p>-->
+    <!--<p>{{ form.checkOutDate.label }} {{ form.checkOutDate }}</p>-->
+    <p>Check In Date <input type="date" name="checkInDate"></p>
+    <p>Check Out Date <input type="date" name="checkOutDate"></p>
+    <p>{{ form.amount.label }} {{ form.amount }}</p>
+    <input type="submit" value="Submit" />
+    <p><a href="/booking">Back</a></p>
+</form>

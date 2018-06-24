@@ -1,0 +1,12 @@
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<b> LOGIN PAGE</b>
+<form action="{% url 'Bookings:validateUser' %}" method="post">
+    {{ field.error }}
+    {% csrf_token %}
+    <p>{{ form.name.label }} {{ form.name }}</p>
+    <p>{{ form.contact.label}} {{ form.contact }}</p>
+    <p>{{ form.password.label }} {{ form.password }}</p>
+    <input type="submit" value="Submit" /><br>
+    <p><a href="/booking">Back</a></p>
+    <p><a href="/booking/register">Register</a></p>
+</form>
