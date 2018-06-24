@@ -31,8 +31,8 @@ def validateUser(request):
         name = request.POST['name']
         contact = request.POST['contact']
         password = request.POST['password']
-        customerObj = Customer.objects.filter(contact=contact).exists()
-        if not customerObj:
+        customerValidate = Customer.objects.filter(contact=contact).exists()
+        if not customerValidate:
             return render(request, 'booking/login.html', {
                 'form': LoginForm(initial={'contact': contact,'name' :name}, auto_id=False),
                 'error_message': 'Your Contact is not registered'
@@ -42,7 +42,7 @@ def validateUser(request):
                 'form': LoginForm(initial={'contact': contact , 'name' :name}, auto_id=False),
                 'error_message': 'Credentials donot match. Please Try Again'
             })
-        return render(request , 'booking/dashboard.html')
+        return render(request , 'booking/dashboard.html',{customerObj: Customer.objects.get()})
 
 
 def bookHotel(request):
@@ -52,8 +52,12 @@ def bookHotel(request):
 
 def bookingResult(request):
     if request.method == 'POST':
-        pass
-        return HttpResponse(request)
+        hotelList = list(Hotel.objects.filter(location__iexact=request.POST['location']).values_list('name',flat=True))
+        print(hotelList)
+        return render(request, 'booking/hotelList.html', {'hotelList': hotelList})
+
+def bookingConfirmation(request):
+    return render(request)
 
 def viewCount():
 	pass
