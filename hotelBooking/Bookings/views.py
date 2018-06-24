@@ -8,17 +8,19 @@ from django.db import transaction
 def index(request):
 	return render(request, 'booking/index.html')
 
-
+#function to handle the login operations and load the Login form into the template
 def login(request):
 	return render(request, 'booking/login.html', {
 		'form': LoginForm
 	})
 
+#User Registration function to handle the registration Operation by loading the Registration Form into the Registration Template
 def register(request):
     return render(request, 'booking/registration.html', {
         'form': RegistrationForm
     })
 
+#Function to handle the data received from the Registration Form
 def registration(request):
     if request.method == 'POST':
         customerObj = Customer(name=request.POST['name'],contact=request.POST['contact'],
@@ -27,6 +29,7 @@ def registration(request):
         customerObj.save()
     return render(request, 'booking/dashboard.html')
 
+#User Dashboard helps to store and validate the data received from the Registration and Login Forms
 def dashboard(request):
     if request.method == 'POST':
         name = request.POST['name']
@@ -49,11 +52,13 @@ def dashboard(request):
         return render(request , 'booking/dashboard.html',{'CustName': customerObj.name})
 
 
+#Function to call and load the Hotel Booking Form into the template
 def bookHotel(request):
     return render(request, 'booking/bookHotel.html', {
         'form': BookHotelForm
     })
 
+#Function to handle the data received from the Hotel Booking Form
 def bookingResult(request):
     if request.method == 'POST':
         hotelList = list(Hotel.objects.filter(location__iexact=request.POST['location']).values_list('name',flat=True))
@@ -67,9 +72,11 @@ def bookingResult(request):
         if request.POST['checkOutDate']:
             request.session['checkOutDate'] = request.POST['checkOutDate']
 
-        #print(request.POST['location'])
         return render(request, 'booking/hotelList.html', {'hotelList': hotelList})
 
+
+#function that does the actual Booking by storing the data in the Database. The function is atomic with Rollback Functionality
+#so that the booking can be reverted back in case of Connectivity Failure
 @transaction.atomic
 def bookingConfirmation(request):
     request.session['hotelName']=request.POST['hotelName']
@@ -100,6 +107,7 @@ def viewVisits(request):
     hotelList = Hotel.objects.all()
     return render(request,'booking/viewVisit.html',{'hotelList': hotelList})
 
+#function provides the data for displaying the draft Booking Functionality
 def draftBooking(request):
     print(request.session['customerPk'])
     bookingListObj = list(Booking.objects.filter(status=Status.objects.get(status="DROPPED"))
