@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from Bookings.models import Status,Feature,Hotel,Customer,Booking,HotelFeature
 from .forms import LoginForm, RegistrationForm,BookHotelForm
+from django.db import transaction
 # Create your views here.
 def index(request):
 	return render(request, 'booking/index.html')
@@ -26,7 +27,7 @@ def registration(request):
         customerObj.save()
     return render(request, 'booking/dashboard.html')
 
-def validateUser(request):
+def dashboard(request):
     if request.method == 'POST':
         name = request.POST['name']
         contact = request.POST['contact']
@@ -42,7 +43,10 @@ def validateUser(request):
                 'form': LoginForm(initial={'contact': contact , 'name' :name}, auto_id=False),
                 'error_message': 'Credentials donot match. Please Try Again'
             })
-        return render(request , 'booking/dashboard.html',{customerObj: Customer.objects.get()})
+        customerObj = Customer.objects.get(contact=contact)
+        request.session['customerPk']=customerObj.pk
+        print(request.session)
+        return render(request , 'booking/dashboard.html')
 
 
 def bookHotel(request):
@@ -53,11 +57,36 @@ def bookHotel(request):
 def bookingResult(request):
     if request.method == 'POST':
         hotelList = list(Hotel.objects.filter(location__iexact=request.POST['location']).values_list('name',flat=True))
-        print(hotelList)
+        request.session['location'] = request.POST['location']
+        if request.POST['amount']:
+            request.session['amount']=request.POST['amount']
+
+        if request.POST['checkInDate']:
+            request.session['checkInDate'] = request.POST['checkInDate']
+
+        if request.POST['checkOutDate']:
+            request.session['checkOutDate'] = request.POST['checkOutDate']
+
+        print(request.POST['location'])
         return render(request, 'booking/hotelList.html', {'hotelList': hotelList})
 
+@transaction.atomic
 def bookingConfirmation(request):
-    return render(request)
+    request.session['hotelName']=request.POST['hotelName']
+    hotelObj = Hotel.objects.get(name=request.session['hotelName'])
 
-def viewCount():
-	pass
+    customerObj = Customer.objects.get(pk=request.session['customerPk'])
+    bookingObj = Booking(h_id=hotelObj,c_id=customerObj,amount=request.session['amount'],
+                         status=Status.objects.get(status="COMPLETED"),checkInDate=request.session['checkInDate'],
+                         checkOutDate=request.session['checkOutDate'])
+    bookingObj.save()
+    totalCount = hotelObj.visitorCount +1
+    hotelObj.visitorCount=totalCount
+    hotelObj.save()
+    return HttpResponse('Your Booking has been Successfully Done')
+
+def viewVisits(request):
+    # hotelList=Hotel.objects.all().values_list('name',flat=True)
+    hotelList = Hotel.objects.all()
+    visitorCount=Hotel.objects.all().values_list('visitorCount',flat=True)
+    return render(request,'booking/viewVisit.html',{'hotelList': hotelList,'visitorCount' : visitorCount})

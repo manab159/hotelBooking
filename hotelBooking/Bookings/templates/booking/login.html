@@ -1,6 +1,6 @@
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 <b> LOGIN PAGE</b>
-<form action="{% url 'Bookings:validateUser' %}" method="post">
+<form action="{% url 'Bookings:dashboard' %}" method="post">
     {{ field.error }}
     {% csrf_token %}
     <p>{{ form.name.label }} {{ form.name }}</p>

@@ -27,4 +27,4 @@ class RegistrationForm(forms.Form):
 
 class BookHotelForm(forms.Form):
     location = forms.CharField(label='Location' ,max_length=20)
-    amount = forms.FloatField(label='Enter the upper limit of Your Budget',required=False)
+    amount = forms.FloatField(label='Enter the upper limit of Your Budget')

@@ -31,7 +31,7 @@ class Feature(models.Model):
 class Hotel(models.Model):
     name = models.CharField(max_length=50, unique=True)
     location = models.TextField(blank=True, null=True)
-    visitorCount = models.PositiveIntegerField(blank=True, null=True)
+    visitorCount = models.IntegerField(blank=True, null=True, default=0)
     cost = models.FloatField(blank=True, null=True)
 
     def __str__(self):
@@ -62,11 +62,11 @@ class Booking(models.Model):
     time = models.DateField(auto_now_add=True)
     amount = models.FloatField(blank=True, null=True)
     status = models.ForeignKey("Status", on_delete=models.CASCADE)
-    checkInTime = models.DateTimeField(auto_now_add=True,blank=True , null=True)
-    checkOutTime =models.DateTimeField(auto_now_add=True,blank=True ,null=True)
+    checkInDate = models.DateField(auto_now_add=True,blank=True , null=True)
+    checkOutDate = models.DateField(auto_now_add=True,blank=True ,null=True)
 
     def __str__(self):
-        return self.h_id
+        return str(self.h_id)
 
     class Meta:
         verbose_name = "Booking"

@@ -1,0 +1,20 @@
+<html>
+	<head>
+		<title>Hotels</title>
+	</head>
+	<body>
+
+        <table border = "1">
+            <tr><th>Hotel Name</th>
+                <th>Visitor Count</th>
+                <th>City</th>
+                <th>Cost Per Day</th>
+            </tr>
+            {% for hotel in hotelList%}
+            <tr><td>{{hotel.name}}</td><td>{{hotel.visitorCount}}</td><td>{{hotel.location}}</td><td>{{hotel.cost}}</td></tr>
+            {% endfor %}
+        </table>
+    <p><a href="/booking">Back</a></p>
+    <p><a href="/booking/login">Click to login</a></p>
+	</body>
+</html>
