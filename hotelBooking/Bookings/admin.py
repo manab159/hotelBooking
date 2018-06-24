@@ -14,12 +14,10 @@ class CustCustomer(admin.ModelAdmin):
 admin.site.register(Customer, CustCustomer)
 
 admin.site.register(Status)
-admin.site.register(Feature)
+
 
 class CustBooking(admin.ModelAdmin):
 	list_display=('h_id','c_id','time','amount','status')
 	list_filter=('h_id','status')
 admin.site.register(Booking, CustBooking)
 
-admin.site.register(HotelFeature)
-admin.site.register(Search)
